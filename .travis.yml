@@ -46,9 +46,10 @@ jobs:
         all_branches: true
         # condition: '$TRAVIS_BRANCH =~ ^(development)$'
       skip_cleanup: 'true'
-      script: cd android && ./gradlew assembleRelease
-    - script: cp app/build/outputs/apk/release/app-release.apk ..
-    - script: cd ..
+      script:
+        - cd android && ./gradlew assembleRelease
+        - cp app/build/outputs/apk/release/app-release.apk ..
+        - cd ..
 
 after_script:
   - './cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t lcov coverage/lcov.info'
