@@ -5,7 +5,6 @@ import Feather from 'react-native-vector-icons/Feather'
 import { GradientBackground, ButtonBack, FormSeparator, Touch, SnowButton, Label } from '../../styled/SnowForms'
 import { KeyboardScrollView, FormInline, NormalInput, FormGroup, FormGroupChild } from '../../styled/NormalForms'
 import { Selector, DateSelector, FormInlineCheck, CheckBoxStyled, Button, CheckLabel } from '../../styled/NormalForms'
-import { ModalContainer, ModalBox, ModalTitle, ModalText, ModalButton, ModalButtonText } from '../../styled/NormalForms'
 import { PageTitle, FormLabel, FormTip } from './styles'
 
 
@@ -20,6 +19,7 @@ import { gender, country, race } from '../../../utils/selectorUtils'
 import { state, getCity } from '../../../utils/brasil'
 import InstitutionSelector from '../../userData/InstitutionSelector'
 import LoadingModal from '../../userData/LoadingModal'
+import RiskGroupModal  from '../../RiskGroupModal';
 
 Feather.loadFont();
 
@@ -56,10 +56,6 @@ class Registrar extends Component {
             showProgressBar: false, //Custom Progress Bar
             modalVisibleRiskGroup: false,
         }
-    }
-
-    setRiskGroupModalVisible(visible) {
-        this.setState({ modalVisibleRiskGroup: visible })
     }
 
     showAlert = () => {
@@ -99,37 +95,7 @@ class Registrar extends Component {
             <>
             <SafeAreaView style={{flex: 0, backgroundColor: '#5DD39E'}} />
             <GradientBackground>
-                <Modal //Modal View for Risk Group Message
-                    animationType="fade"
-                    transparent={true}
-                    visible={this.state.modalVisibleRiskGroup}
-                    onRequestClose={() => {
-                        this.setRiskGroupModalVisible(!this.state.modalVisibleRiskGroup)
-                    }
-                }>
-                    <ModalContainer>
-                        <ModalBox>
-                            <ModalTitle>
-                                {translate("register.riskGroupTitle")}
-                            </ModalTitle>
-
-                            <ModalText>
-                                {translate("register.riskGroupMessage")}
-                            </ModalText>
-
-                            <Button onPress={() => {
-                                this.setRiskGroupModalVisible(!this.state.modalVisibleRiskGroup)
-                                }
-                            }>
-                                <ModalButton>
-                                    <ModalButtonText>
-                                        {translate("register.riskGroupButton")}
-                                    </ModalButtonText>
-                                </ModalButton>
-                            </Button>
-                        </ModalBox>
-                    </ModalContainer>
-                </Modal>
+                <RiskGroupModal/>
 
                 <KeyboardScrollView keyboardShouldPersistTaps="always">
                     <UserIcon height={scale(68)} width={scale(68)} fill="#ffffff" />

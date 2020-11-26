@@ -29,7 +29,7 @@ export const state = [
      { key: 'TOCANTINS', label: 'TOCANTINS' },
 ]
 
-//Informcação de Municipios
+//Informação de Municipios
 
 export function getCity(city) {
      //console.warn(city)

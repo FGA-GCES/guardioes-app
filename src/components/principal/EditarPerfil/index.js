@@ -3,7 +3,7 @@ import { View, StyleSheet, Alert, Modal, Platform } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
 import { Delete } from './styles'
-import { ModalContainer, ModalBox, ModalTitle, ModalText, Button, ModalButton, ModalButtonText } from '../../styled/NormalForms'
+import { Button } from '../../styled/NormalForms'
 import { Container, KeyboardScrollView, FormInline, FormLabel, NormalInput, FormGroup, FormGroupChild } from '../../styled/NormalForms'
 import { Selector, DateSelector, ReadOnlyInput, FormInlineCheck, CheckBoxStyled, CheckLabel, SendContainer, SendText } from '../../styled/NormalForms'
 
@@ -18,6 +18,7 @@ import { state, getCity } from '../../../utils/brasil'
 import { handleAvatar, getInitials } from '../../../utils/constUtils'
 import InstitutionSelector from '../../userData/InstitutionSelector'
 import LoadingModal from '../../userData/LoadingModal'
+import RiskGroupModal  from '../../RiskGroupModal';
 
 let data = new Date()
 let d = data.getDate()
@@ -64,17 +65,7 @@ class EditarPerfil extends Component {
         await this.getHouseholdAvatars()
         const userSelected = await AsyncStorage.getItem('userSelected')
         this.setState({ userSelected })
-    }
-
-    getHouseholdAvatars = async () => {
-        let householdAvatars = JSON.parse(await AsyncStorage.getItem('householdAvatars'))
-
-        if (!householdAvatars) {
-            householdAvatars = {}
-        }
-
-        this.setState({ householdAvatars })
-    }
+    } 
 
     handleEdit = async () => {
         if (this.state.Country !== "Brazil") {
@@ -231,6 +222,16 @@ class EditarPerfil extends Component {
         return true
     }
 
+    getHouseholdAvatars = async () => {
+        let householdAvatars = JSON.parse(await AsyncStorage.getItem('householdAvatars'))
+
+        if (!householdAvatars) {
+            householdAvatars = {}
+        }
+
+        this.setState({ householdAvatars })
+    }
+
     editHousehold = () => {
         if (!this.isHouseholdDataValid()) {
             return
@@ -273,8 +274,21 @@ class EditarPerfil extends Component {
             })
     }
 
-    setRiskGroupModalVisible(visible) {
-        this.setState({ modalVisibleRiskGroup: visible })
+    deleteHousehold = () => {
+        return fetch(`${API_URL}/users/${this.state.userID}/households/${this.state.householdID}`, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/vnd.api+json',
+                Authorization: `${this.state.userToken}`
+            },
+        }).then((response) => {
+            console.warn(response.status)
+            if (response.status == 204) {
+                this.props.navigation.goBack()
+            } else {
+                Alert.alert("Ocorreu um erro, tente novamente depois.")
+            }
+        })
     }
 
     setAlert = (show) => {
@@ -294,6 +308,22 @@ class EditarPerfil extends Component {
         this.state.instituitionComponentError = error
     }
 
+    confirmDelete = () => {
+        Alert.alert(
+            "Deletar usuário",
+            "Deseja deletar esse usuário?",
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                { text: 'OK', onPress: () => this.deleteHousehold() },
+            ],
+            { cancelable: false },
+        )
+    }
+
     render() {
         const { isUser } = this.state
         const { showAlert } = this.state
@@ -301,37 +331,7 @@ class EditarPerfil extends Component {
 
         return (
             <Container>
-                <Modal //Modal View for Risk Group Message
-                    animationType="fade"
-                    transparent={true}
-                    visible={this.state.modalVisibleRiskGroup}
-                    onRequestClose={() => {
-                        this.setRiskGroupModalVisible(!this.state.modalVisibleRiskGroup)
-                    }
-                }>
-                    <ModalContainer>
-                        <ModalBox>
-                            <ModalTitle>
-                                {translate("register.riskGroupTitle")}
-                            </ModalTitle>
-
-                            <ModalText>
-                                {translate("register.riskGroupMessage")}
-                            </ModalText>
-
-                            <Button onPress={() => {
-                                this.setRiskGroupModalVisible(!this.state.modalVisibleRiskGroup)
-                                }
-                            }>
-                                <ModalButton>
-                                    <ModalButtonText>
-                                        {translate("register.riskGroupButton")}
-                                    </ModalButtonText>
-                                </ModalButton>
-                            </Button>
-                        </ModalBox>
-                    </ModalContainer>
-                </Modal>
+                <RiskGroupModal/>
                 <KeyboardScrollView>
                     <FormInline>
                         <Avatar
@@ -486,38 +486,6 @@ class EditarPerfil extends Component {
         )
     }
 
-    confirmDelete = () => {
-        Alert.alert(
-            "Deletar usuário",
-            "Deseja deletar esse usuário?",
-            [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-                { text: 'OK', onPress: () => this.deleteHousehold() },
-            ],
-            { cancelable: false },
-        )
-    }
-
-    deleteHousehold = () => {
-        return fetch(`${API_URL}/users/${this.state.userID}/households/${this.state.householdID}`, {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/vnd.api+json',
-                Authorization: `${this.state.userToken}`
-            },
-        }).then((response) => {
-            console.warn(response.status)
-            if (response.status == 204) {
-                this.props.navigation.goBack()
-            } else {
-                Alert.alert("Ocorreu um erro, tente novamente depois.")
-            }
-        })
-    }
 }
 
 const options = {

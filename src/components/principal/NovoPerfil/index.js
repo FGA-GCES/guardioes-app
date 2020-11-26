@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { View, NetInfo, Alert, Modal } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
-import { ModalContainer, ModalBox, ModalTitle, ModalText, ModalButton, ModalButtonText } from '../../styled/NormalForms'
 import { Container, KeyboardScrollView, FormInline, FormLabel, NormalInput, FormGroup, FormGroupChild, Selector, DateSelector } from '../../styled/NormalForms'
 import { FormInlineCheck, CheckBoxStyled, CheckLabel, Button, SendContainer, SendText } from '../../styled/NormalForms'
 import { CoolAlert } from '../../styled/CoolAlert'
@@ -15,6 +14,7 @@ import { API_URL } from 'react-native-dotenv'
 import { gender, country, race, household } from '../../../utils/selectorUtils'
 import InstitutionSelector from '../../userData/InstitutionSelector'
 import LoadingModal from '../../userData/LoadingModal'
+import RiskGroupModal  from '../../RiskGroupModal';
 
 let data = new Date()
 let d = data.getDate()
@@ -50,10 +50,6 @@ class NovoPerfil extends Component {
             riskGroup: false,
             modalVisibleRiskGroup: false,
         }
-    }
-
-    setRiskGroupModalVisible(visible) {
-        this.setState({ modalVisibleRiskGroup: visible })
     }
 
     showAlert = () => {
@@ -111,37 +107,7 @@ class NovoPerfil extends Component {
 
         return (
             <Container>
-                <Modal //Modal View for Risk Group Message
-                    animationType="fade"
-                    transparent={true}
-                    visible={this.state.modalVisibleRiskGroup}
-                    onRequestClose={() => {
-                        this.setRiskGroupModalVisible(!this.state.modalVisibleRiskGroup)
-                    }
-                }>
-                    <ModalContainer>
-                        <ModalBox>
-                            <ModalTitle>
-                                {translate("register.riskGroupTitle")}
-                            </ModalTitle>
-
-                            <ModalText>
-                                {translate("register.riskGroupMessage")}
-                            </ModalText>
-
-                            <Button onPress={() => {
-                                this.setRiskGroupModalVisible(!this.state.modalVisibleRiskGroup)
-                                }
-                            }>
-                                <ModalButton>
-                                    <ModalButtonText>
-                                        {translate("register.riskGroupButton")}
-                                    </ModalButtonText>
-                                </ModalButton>
-                            </Button>
-                        </ModalBox>
-                    </ModalContainer>
-                </Modal>
+                <RiskGroupModal/>
                 <KeyboardScrollView keyboardShouldPersistTaps={"always"}>
                     <FormInline>
                         <FormLabel>
